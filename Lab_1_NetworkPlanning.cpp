@@ -193,8 +193,8 @@ int main()
 {
 	setlocale(LC_ALL, "ru-RU");
 
-	//cout << "0 - En, 1 - Ru" << endl;
-	//cin >> toLocalize;
+	cout << "0 - En, 1 - Ru" << endl;
+	cin >> toLocalize;
 
 	ifstream fin("fin1.txt");
 	if (!fin)
