@@ -37,6 +37,15 @@ public:
 			Task t;
 			if (!(in >> t.weight))
 				break;
+			if (t.weight < 0)
+			{
+				if (toLocalize)
+					cout << "Неверные входные данные\nДлинна задачи не может быть меньше нуля" << endl;
+				else
+					cout << "Invalid input data\nLength of a task can't be less then zero" << endl;
+				return;
+			}
+
 			getline(in, str);
 
 			ss << str;
@@ -48,6 +57,19 @@ public:
 		Network.push_back({ 0 });
 		
 		size = Network.size();
+
+
+		for (int i = 1; i < size - 1; i++)
+			for (int v : Network[i].outgoing)
+				if (!(0 <= v && v < size)) // if (!(1 <= v && v < size))
+				{
+					if (toLocalize)
+						cout << "Неверные входные данные\nОтсутствует работа с номером ";
+					else
+						cout << "Invalid input data\nCouldn't find task with number ";
+					cout << v << endl;
+					exit(1);
+				}
 
 		for (int i = 0; i < size; i++)
 		{
@@ -85,21 +107,33 @@ private:
 
 	vector <int> topological()
 	{
-		vector <bool> visited(size, false);
+		vector <int> visited(size);
 		vector <int> sortV;
 		sortV.reserve(size);
 		topSort(visited, sortV, size - 1);
 
 		return sortV;
 	}
-	void topSort(vector<bool>& visited, vector <int>& sortV, int currV)
+	void topSort(vector<int>& visited, vector <int>& sortV, int currV)
 	{
-		visited[currV] = true;
-		for (int i : Network[currV].incoming)
+		visited[currV]++;
+		for (int v : Network[currV].incoming)
 		{
-			if (!visited[i])
-				topSort(visited, sortV, i);
+			switch (visited[v])
+			{
+				case 0:
+					topSort(visited, sortV, v);
+					break;
+				case 1:
+					if (toLocalize)
+						cout << "Задача " << v << " не может быть начата, присутствует цикл" << endl;
+					else
+						cout << "Task " << v << " can't be started, found a loop" << endl;
+					exit(1);
+			}
+
 		}
+		visited[currV]++;
 		sortV.push_back(currV);
 	}
 
@@ -159,13 +193,12 @@ int main()
 {
 	setlocale(LC_ALL, "ru-RU");
 
-	cout << "0 - En, 1 - Ru" << endl;
-	cin >> toLocalize;
+	//cout << "0 - En, 1 - Ru" << endl;
+	//cin >> toLocalize;
 
 	ifstream fin("fin1.txt");
 	if (!fin)
 	{
-
 		if (toLocalize)
 			cout << "Файл не найден" << endl;
 		else
