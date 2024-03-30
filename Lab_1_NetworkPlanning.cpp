@@ -10,7 +10,8 @@
 
 using namespace std;
 
-// Задача с указанием веса и последующих задач
+bool toLocalize = false;
+
 class Task
 {
 public:
@@ -142,7 +143,10 @@ private:
 
 	void print(const vector<int>& time)
 	{
-		cout << "Номер задачи | Максимальное время отсрочки без срыва сроков\n";
+		if (toLocalize)
+			cout << "Номер задачи | Максимальное время отсрочки без срыва сроков\n";
+		else
+			cout << "Task number  | Maximum delay time without missed deadlines\n";
 		cout << "-------------+---------------------------------------------\n";
 
 		for (int i = 1; i < size - 1; i++)
@@ -154,12 +158,18 @@ private:
 int main()
 {
 	setlocale(LC_ALL, "ru-RU");
-	
-	ifstream fin("fin1.txt");
 
+	cout << "0 - En, 1 - Ru" << endl;
+	cin >> toLocalize;
+
+	ifstream fin("fin1.txt");
 	if (!fin)
 	{
-		cout << "Файл не найден" << endl;
+
+		if (toLocalize)
+			cout << "Файл не найден" << endl;
+		else
+			cout << "Couldn't find the file" << endl;
 		return 0;
 	}
 
